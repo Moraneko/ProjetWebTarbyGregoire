@@ -8,7 +8,6 @@
       class="primary"
     >
      <v-list-group
-          v-model="item"
           no-action
           sub-group
           color="f00000"
@@ -43,34 +42,29 @@
     </v-app-bar>
 
     <v-content class="primary">
-      <v-card outlined tile class="primary">
-        <div><h1 align="center">I'm a flexbox container!</h1></div>
+      <v-card tile class="primary d-flex justify-center">
+        <div><h1 class="d-flex justify-center">Bienvenue sur notre site!</h1><h2>Ici vous pourrez réaliser une liste des animes que vous avez vue afin de donner votre avis et le partager </h2></div>
       </v-card>
-       <div>
-    <v-card
-      v-for="k in 5"
-      :key="k"
-      class="d-flex justify-space-around mb-6 primary"
-      tile
-      height="400"
-    >
-      <v-card
-        v-for="n in 3"
-        :key="n"
-        class="pa-2 primary"
-        outlined
-        tile
-      >
-      <v-img
-      src="https://picsum.photos/id/11/500/300"
-      max-width="400"
-      max-height="300"></v-img>
-        Flex item
-      </v-card>
-    </v-card>
-  </div>
-  </v-content>
-
+      <div>
+        <v-card
+          v-for="k in parseFloat((this.dataFromApi.length / 3 ).toFixed(0))"
+          :key="k"
+          class="d-flex justify-space-around mb-6 primary"
+          tile
+          height="400"
+          >
+          <v-card
+            v-for="n in 3"
+            :key="n"
+            class="pa-2 primary"
+            outlined
+            tile
+            >
+            <CarteInfo v-bind:titre="titre" v-bind:img="img" v-on:increment-index="incrementation"></CarteInfo>
+          </v-card>
+        </v-card>
+      </div>
+    </v-content>
     <v-footer app>
       <span>&copy; 2019</span>
     </v-footer>
@@ -78,21 +72,53 @@
 </template>
 
 <script>
+import CarteInfo from './CarteInfo'
+
 export default {
   props: {
     source: String
   },
   data: () => ({
     drawer: null,
-    obj: 1,
+    indexOfData: 0,
+    titre: '',
+    img: '',
+    dataFromApi: '',
     genre: [
       ['aaaaaaa1', '#f00000'],
       ['bbbbbbb2', '#ffffff'],
       ['ccccccc3', '#ffffff']
     ]
   }),
+  components: {
+    CarteInfo
+  },
+  methods: {
+    initTable: function (data) {
+      this.dataFromApi = data.top
+      this.updateInfo()
+    },
+    updateInfo: function () {
+      this.img = this.dataFromApi[this.indexOfData].image_url
+      this.titre = this.dataFromApi[this.indexOfData].title
+      console.log(this.titre)
+    },
+    incrementation: function () {
+      if (this.indexOfData < this.dataFromApi.length) {
+        this.indexOfData++
+        this.updateInfo()
+      }
+    }
+  },
   created () {
     this.$vuetify.theme.dark = true
+    fetch('https://api.jikan.moe/v3/top/anime/1').then(response => {
+      return response.json()
+    }).then(data => {
+      this.initTable(data)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 }
 </script>
