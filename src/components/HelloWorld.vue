@@ -45,23 +45,15 @@
       <v-card tile class="primary d-flex justify-center">
         <div><h1 class="d-flex justify-center">Bienvenue sur notre site!</h1><h2>Ici vous pourrez réaliser une liste des animes que vous avez vue afin de donner votre avis et le partager </h2></div>
       </v-card>
-      <div>
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding: 10px;">
         <v-card
-          v-for="k in parseFloat((this.dataFromApi.length / 3 ).toFixed(0))"
-          :key="k"
+          v-for="item in dataFromApi"
+          :key="item.id"
           class="d-flex justify-space-around mb-6 primary"
           tile
-          height="400"
+          height="500"
           >
-          <v-card
-            v-for="n in 3"
-            :key="n"
-            class="pa-2 primary"
-            outlined
-            tile
-            >
-            <CarteInfo v-bind:titre="titre" v-bind:img="img" v-on:increment-index="incrementation"></CarteInfo>
-          </v-card>
+          <CarteInfo v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
         </v-card>
       </div>
     </v-content>
@@ -84,6 +76,7 @@ export default {
     titre: '',
     img: '',
     dataFromApi: '',
+    connected: true,
     genre: [
       ['aaaaaaa1', '#f00000'],
       ['bbbbbbb2', '#ffffff'],
@@ -101,7 +94,6 @@ export default {
     updateInfo: function () {
       this.img = this.dataFromApi[this.indexOfData].image_url
       this.titre = this.dataFromApi[this.indexOfData].title
-      console.log(this.titre)
     },
     incrementation: function () {
       if (this.indexOfData < this.dataFromApi.length) {
