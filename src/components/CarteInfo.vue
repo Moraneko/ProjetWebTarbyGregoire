@@ -1,24 +1,7 @@
 <template>
-    <v-card width="200" height="500" class="mx-auto">
-      <v-card  @click="doSomething()">
-        <v-card-title  class="d-flex overline justify-center">{{titre}}
-        </v-card-title>
-        <v-img align-end  v-bind:src="img" width="200" height="300" raised="true"></v-img>
-        <v-card-text>
-        <v-row align="center">
-          <v-rating
-            :value="score/2"
-            color="amber"
-            half-increments
-            dense
-            size="14"
-            readonly
-          ></v-rating>
-          <div class="grey--text ml-4">{{score}}</div>
-        </v-row>
-        </v-card-text>
-      </v-card>
-        <v-card-actions v-if="connected===true" class="d-flex flex-direction:column ">
+    <v-card v-if="connected===true" width="200" height="500" class="mx-auto">
+      <CarteInfoStatic v-bind:titre="titre" v-bind:img="img" v-bind:score="score"></CarteInfoStatic>
+        <v-card-actions class="d-flex flex-direction:column ">
           <v-rating
           color="yellow darken-3"
           background-color="grey darken-1"
@@ -31,9 +14,14 @@
           <v-btn text  class="d-flex justify-center">Ajouter</v-btn>
         </v-card-actions>
     </v-card>
+  <v-card v-else width="200" height="300" class="mx-auto">
+      <CarteInfoStatic v-bind:titre="titre" v-bind:img="img" v-bind:score="score"></CarteInfoStatic>
+  </v-card>
 </template>
 
 <script>
+import CarteInfoStatic from './CarteInfoStatic'
+
 export default {
   props: {
     titre: String,
@@ -41,13 +29,11 @@ export default {
     connected: Boolean,
     score: Number
   },
-  data: () => (''
-  ),
-  methods: {
-    doSomething () {
-      console.log(this.titre)
-    }
+  components: {
+    CarteInfoStatic
   },
+  data: () => ({
+  }),
   created () {
     this.$emit('increment-index')
   }
