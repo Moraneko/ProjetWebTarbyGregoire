@@ -4,21 +4,22 @@
     <v-list>
         <v-list-item>
             <v-list-item-icon> <v-icon>fas fa-search</v-icon> </v-list-item-icon>
-            <v-text-field hide-details prepend-icon="search" single-line></v-text-field>
+            <v-text-field hide-details  v-model="searchSTR" prepend-icon="search" single-line @keyup.enter="search()"></v-text-field>
         </v-list-item>
-        <v-list-group no-action sub-group color="f00000">
+        <v-list-group no-action sub-group color="f00000" >
         <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>Genres</v-list-item-title>
             </v-list-item-content>
           </template>
+          <div>
           <v-list-item
             v-for="(item,index) in genre"
             :key="index"
             link
           >
             <v-list-item-title v-text="item[0]" @click="changeGenre(item[1])" ></v-list-item-title>
-          </v-list-item>
+          </v-list-item></div>
       </v-list-group>
     </v-list>
     </v-navigation-drawer>
@@ -46,7 +47,8 @@
           tile
           height="500"
           >
-          <CarteInfo v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
+          <CarteInfo v-if="item.rated === undefined " v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
+          <CarteInfo v-else-if="item.rated !== 'Rx' " v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
         </v-card>
       </div>
     </v-content>
@@ -70,12 +72,18 @@ export default {
     titre: '',
     img: '',
     dataFromApi: '',
+    searchSTR: '',
     connected: true,
     appelBool: false,
     genre: [
-      ['Action', 1],
-      ['Aventure', 2],
-      ['Comédie', 4]
+      ['Action', 1], ['Aventure', 2], ['Comédie', 4],
+      ['Mysère', 7], ['Drama', 8], ['Fantaisie', 10],
+      ['Jeux', 11], ['Historique', 13], ['Horreur', 14],
+      ['Magie', 16], ['Arts Martiaux', 17], ['Mecha', 18],
+      ['Musique', 19], ['Parodie', 20], ['Samourai', 21], ['Romance', 22],
+      ['Ecole', 23], ['Sci-fi', 24], ['Shonen', 27], ['Shoujo', 25], ['Espace', 29], ['Sport', 30],
+      ['Super pouvoir', 31], ['Vampire', 32], ['Slice of Life', 36], ['Militaire', 38], ['Police', 39],
+      ['Psychologique', 40], ['Trhiller', 41]
     ]
   }),
   components: {
@@ -96,6 +104,17 @@ export default {
         return response.json()
       }).then(data => {
         this.dataFromApi = data.anime
+        this.appelBool = false
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    search: function () {
+      this.allBool = true
+      fetch(this.linkApi + 'search/anime?q=' + this.searchSTR.replace(' ', '%20') + '&page=1?rated=g,pg,pg13,r17').then(response => {
+        return response.json()
+      }).then(data => {
+        this.dataFromApi = data.results
         this.appelBool = false
       }).catch(err => {
         console.log(err)
