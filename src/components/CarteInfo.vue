@@ -1,6 +1,6 @@
 <template>
     <v-card v-if="connected===true" width="200" height="500" class="mx-auto">
-      <CarteInfoStatic v-bind:titre="titre" v-bind:img="img" v-bind:score="score"></CarteInfoStatic>
+      <CarteInfoStatic :titre="titre" :img="img" :score="score" :id="id"></CarteInfoStatic>
         <v-card-actions class="d-flex flex-direction:column ">
           <v-rating
           color="yellow darken-3"
@@ -27,7 +27,8 @@ export default {
     titre: String,
     img: String,
     connected: Boolean,
-    score: Number
+    score: Number,
+    id: Number
   },
   components: {
     CarteInfoStatic

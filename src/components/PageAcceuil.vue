@@ -3,8 +3,9 @@
     <v-navigation-drawer v-model="drawer" app clipped width="200" class="primary">
     <v-list>
         <v-list-item>
+          <div>
             <v-list-item-icon> <v-icon>fas fa-search</v-icon> </v-list-item-icon>
-            <v-text-field hide-details  v-model="searchSTR" prepend-icon="search" single-line @keyup.enter="search()"></v-text-field>
+            <v-text-field hide-details  v-model="searchSTR" prepend-icon="search" single-line @keyup.enter="search()"></v-text-field></div>
         </v-list-item>
         <v-list-group no-action sub-group color="f00000" >
         <template v-slot:activator>
@@ -33,7 +34,6 @@
            <v-btn color="#f00000">Connection</v-btn>
         </v-toolbar-items>
     </v-app-bar>
-
     <v-content class="primary">
       <v-card tile class="primary d-flex justify-center">
         <div><h1 class="d-flex justify-center">Bienvenue sur notre site!</h1><h2>Ici vous pourrez réaliser une liste des animes que vous avez vue afin de donner votre avis et le partager </h2>
@@ -47,8 +47,8 @@
           tile
           height="500"
           >
-          <CarteInfo v-if="item.rated === undefined " v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
-          <CarteInfo v-else-if="item.rated !== 'Rx' " v-bind:titre="item.title" v-bind:img="item.image_url" v-bind:connected="connected" v-bind:score="item.score" v-on:increment-index="incrementation"></CarteInfo>
+          <CarteInfo v-if="item.rated === undefined " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" v-on:increment-index="incrementation"></CarteInfo>
+          <CarteInfo v-else-if="item.rated !== 'Rx' " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" v-on:increment-index="incrementation"></CarteInfo>
         </v-card>
       </div>
     </v-content>
