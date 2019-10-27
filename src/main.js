@@ -4,6 +4,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
+export const bus = new Vue({})
 
 new Vue({
   vuetify,

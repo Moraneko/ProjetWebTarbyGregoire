@@ -47,8 +47,8 @@
           tile
           height="500"
           >
-          <CarteInfo v-if="item.rated === undefined " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" v-on:increment-index="incrementation"></CarteInfo>
-          <CarteInfo v-else-if="item.rated !== 'Rx' " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" v-on:increment-index="incrementation"></CarteInfo>
+          <CarteInfo v-if="item.rated === undefined " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore"></CarteInfo>
+          <CarteInfo v-else-if="item.rated !== 'Rx' " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore"></CarteInfo>
         </v-card>
       </div>
     </v-content>
@@ -60,6 +60,7 @@
 
 <script>
 import CarteInfo from './CarteInfo'
+import { bus } from '../main'
 
 export default {
   props: {
@@ -75,6 +76,55 @@ export default {
     searchSTR: '',
     connected: true,
     appelBool: false,
+    listePerso: [
+      {
+        anime: {
+          'mal_id': 5114,
+          'rank': 1,
+          'title': 'Fullmetal Alchemist: Brotherhood',
+          'url': 'https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood',
+          'image_url': 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg?s=faffcb677a5eacd17bf761edd78bfb3f',
+          'type': 'TV',
+          'episodes': 64,
+          'start_date': 'Apr 2009',
+          'end_date': 'Jul 2010',
+          'members': 1562628,
+          'score': 9.23
+        },
+        score: 5
+      },
+      {
+        anime: {
+          'mal_id': 9253,
+          'rank': 2,
+          'title': 'Steins;Gate',
+          'url': 'https://myanimelist.net/anime/9253/Steins_Gate',
+          'image_url': 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
+          'type': 'TV',
+          'episodes': 24,
+          'start_date': 'Apr 2011',
+          'end_date': 'Sep 2011',
+          'members': 1291950,
+          'score': 9.12
+        },
+        score: 4
+      },
+      { anime: {
+        'mal_id': 9253,
+        'rank': 2,
+        'title': 'Steins;Gate',
+        'url': 'https://myanimelist.net/anime/9253/Steins_Gate',
+        'image_url': 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
+        'type': 'TV',
+        'episodes': 24,
+        'start_date': 'Apr 2011',
+        'end_date': 'Sep 2011',
+        'members': 1291950,
+        'score': 9.12
+      },
+      score: 3
+      }
+    ],
     genre: [
       ['Action', 1], ['Aventure', 2], ['Comédie', 4],
       ['Mysère', 7], ['Drama', 8], ['Fantaisie', 10],
@@ -92,11 +142,21 @@ export default {
   methods: {
     initTable: function (data) {
       this.dataFromApi = data.top
-      this.updateInfo()
     },
-    updateInfo: function () {
-      this.img = this.dataFromApi[this.indexOfData].image_url
-      this.titre = this.dataFromApi[this.indexOfData].title
+    updateScore: function (infoToUpdate) {
+      for (var i in this.listePerso) {
+        if (infoToUpdate[1] === this.listePerso[i].anime.mal_id) {
+          this.listePerso[i].score = infoToUpdate[0]
+        }
+      }
+    },
+    isInListPerso: function (idFromAnime) {
+      for (var i in this.listePerso) {
+        if (idFromAnime === this.listePerso[i].anime.mal_id) {
+          return [true, this.listePerso[i].score]
+        }
+      }
+      return [false, 0]
     },
     changeGenre: function (idGenre) {
       this.appelBool = true
@@ -119,18 +179,13 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-    },
-    incrementation: function () {
-      if (this.indexOfData < this.dataFromApi.length) {
-        this.indexOfData++
-        this.updateInfo()
-      } else {
-        this.indexOfData = 0
-      }
     }
   },
   created () {
     this.$vuetify.theme.dark = true
+    bus.$on('updateScoreFromOverLay', (infoFromOverlay) => {
+      this.updateScore(infoFromOverlay)
+    })
     fetch('https://api.jikan.moe/v3/top/anime/1').then(response => {
       return response.json()
     }).then(data => {

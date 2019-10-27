@@ -21,7 +21,7 @@
         </v-card-text>
     </v-card>
     <loadingOverlay :loading="loading"></loadingOverlay>
-    <InfoOverlay :overlayVisibility="overlayVisibility" :data="apiFetch" :id="id" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
+    <InfoOverlay :connected="connected" :overlayVisibility="overlayVisibility" :data="apiFetch" :id="id" :added="added" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
   </div>
 </template>
 
@@ -34,7 +34,9 @@ export default {
     titre: String,
     img: String,
     score: Number,
-    id: Number
+    id: Number,
+    added: Array,
+    connected: Boolean
   },
   components: {
     InfoOverlay,
@@ -53,11 +55,13 @@ export default {
       }).then(data => {
         this.apiFetch = data
         this.loading = false
-        console.log(this.apiFetch.url)
       }).catch(err => {
         console.log(err)
       })
       this.overlayVisibility = true
+    },
+    updateScore3: function (val) {
+      this.$emit('updateScore2', [val * 2, this.id])
     },
 
     fermerOverlay () {

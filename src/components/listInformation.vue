@@ -1,5 +1,6 @@
 <template>
   <v-row class="d-flex flex-wrap">
+    <v-card height="500" width="700">
     <v-expansion-panels accordion>
       <v-expansion-panel>
         <v-expansion-panel-header>Support</v-expansion-panel-header>
@@ -30,10 +31,11 @@
         <v-expansion-panel-header>Histoire</v-expansion-panel-header>
         <v-expansion-panel-content>
           <p><span style="color:aqua">Synopsis</span> : {{data.synopsis}}</p>
-          <p><span style="color:aqua">Background</span> : {{data.background}}</p>
+          <p v-if="data.background !== null"><span style="color:aqua">Background</span> : {{data.background}}</p>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    </v-card>
   </v-row>
 </template>
 

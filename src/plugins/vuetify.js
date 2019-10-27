@@ -11,7 +11,7 @@ export default new Vuetify({
     themes: {
       dark: {
         primary: '#000000',
-        secondary: '#000000'
+        secondary: '#151515'
       }
     }
   }
