@@ -12,6 +12,7 @@ const cors = require('cors')
 const session = require('express-session')
 
 const app = express()
+
 app.set('view engine', 'vue')
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
 app.use(cors({
@@ -26,6 +27,7 @@ app.use(session({
 }))
 app.use(morgan('dev'))
 app.use(bodyParser.json())
+
 
 const path = require('path')
 app.use(express.static(path.join(__dirname, '/dist')))
@@ -78,6 +80,7 @@ app.post('/api/login', (req, res) => {
   }
 })
 
+
 app.get('/api/logout', (req, res) => {
   if (!req.session.userId) {
     res.status(401)
@@ -107,4 +110,6 @@ app.get('/api/admin', (req, res) => {
 const port = process.env.PORT || 4000
 app.listen(port, () => {
   console.log(`listening on ${port}`)
+
 })
+
