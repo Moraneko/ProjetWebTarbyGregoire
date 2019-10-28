@@ -12,7 +12,7 @@ const cors = require('cors')
 const session = require('express-session')
 
 const app = express()
-
+app.set('view engine', 'vue')
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
 app.use(cors({
   credentials: true,
@@ -34,6 +34,10 @@ const users = [{
   username: 'admin',
   password: 'changethispassword'
 }]
+
+app.get('/', (req, res) => {
+  Response.render('components/Connexion.vue', { test: 'salut' })
+})
 
 app.get('/api/test', (req, res) => {
   console.log('ce console.log est appelé au bon moment')

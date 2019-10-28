@@ -9,6 +9,18 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'Accueil',
+      component: () => import('./components/PageAcc.vue')
+
+    },
+    {
+      path: '/Utilisateur',
+      name: 'Utilisateur',
+      component: () => import('./components/Connexion.vue')
+
+    },
+    {
+      path: '/Connexion',
       name: 'Connexion',
       component: () => import('./components/Connexion.vue')
 
