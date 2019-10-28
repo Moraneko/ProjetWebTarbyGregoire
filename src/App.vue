@@ -1,18 +1,18 @@
 <template>
   <v-app>
     <v-content>
-      <Connexion/>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import Connexion from './components/Connexion'
+/* import Connexion from './components/Connexion' */
 
 export default {
   name: 'App',
   components: {
-    Connexion
+
   },
   data: () => ({
     //

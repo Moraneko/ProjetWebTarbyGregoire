@@ -2,7 +2,7 @@
   <v-form
     ref="form"
     v-model="valid"
-    lazy-validation
+    :lazy-validation="lazy"
   >
     <v-text-field
       v-model="email"
@@ -25,9 +25,17 @@
       color="success"
       class="mr-4"
       @click="validate"
+      :to="{name: 'Inscription'}"
     >
       Valider
     </v-btn>
+    <v-btn
+      color="error"
+      class="mr-4"
+      @click="reset"
+    >
+      Reinitialiser
+          </v-btn>
   </v-form>
 </template>
 
@@ -44,7 +52,9 @@ export default {
     passwordRules: [
       v => !!v || 'Le mot de passe est requis',
       v => (v && v.length >= 6) || 'Minimum 6 caractères'],
-    select: null
+    select: null,
+    lazy: false
+
   }),
 
   methods: {
@@ -53,6 +63,9 @@ export default {
         this.snackbar = true
         this.$refs.form.reset()
       }
+    },
+    reset () {
+      this.$refs.form.reset()
     }
   }
 }

@@ -2,7 +2,7 @@
   <v-form
     ref="form"
     v-model="valid"
-    lazy-validation
+    :lazy-validation="lazy"
   >
     <v-text-field
       v-model="Prenom"
@@ -76,7 +76,7 @@
 <script>
 export default {
   data: () => ({
-    valid: true,
+    valid: false,
     name: '',
     confirmation: '',
     nameRules: [
@@ -102,7 +102,8 @@ export default {
       v => !!v || 'La conformation du mot de passe est requise'
     ],
     select: null,
-    checkbox: false
+    checkbox: false,
+    lazy: false
   }),
 
   methods: {
