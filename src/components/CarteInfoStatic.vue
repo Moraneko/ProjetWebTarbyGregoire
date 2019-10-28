@@ -60,9 +60,6 @@ export default {
       })
       this.overlayVisibility = true
     },
-    updateScore3: function (val) {
-      this.$emit('updateScore2', [val * 2, this.id])
-    },
 
     fermerOverlay () {
       this.overlayVisibility = false

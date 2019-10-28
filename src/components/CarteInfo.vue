@@ -11,8 +11,8 @@
           <v-btn text v-else class="d-flex justify-center">Retirer</v-btn>
         </v-card-actions>
     </v-card>
-  <v-card v-else width="200" height="300" class="mx-auto">
-      <CarteInfoStatic v-bind:titre="titre" v-bind:img="img" v-bind:score="score"></CarteInfoStatic>
+  <v-card v-else width="200" height="300" class="mx-auto mb-n12">
+      <CarteInfoStatic :connected="connected" :titre="titre" :img="img" :id="id" :added="added" :score="score"></CarteInfoStatic>
   </v-card>
 </template>
 

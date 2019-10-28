@@ -7,12 +7,12 @@
             <h2 class="d-flex text-justify mx-auto" v-else>{{titre}}</h2>
         </v-card>
             <div class="d-flex flex-column align-center pr-9 ml-9">
-                <v-rating  v-on:input="updateScore" :value="score/2" color="amber" half-increments hover size="25"></v-rating>
-                <div class="grey--text ml-4">{{score}}</div>
+                <v-rating  v-on:input="updateScore" :value="added[1]/2" color="amber" half-increments hover size="25"></v-rating>
+                <div class="grey--text ml-4">{{added[1]}}</div>
             </div>
     </v-card>
     <loadingOverlay :loading="loading"></loadingOverlay>
-    <InfoOverlay :overlayVisibility="overlayVisibility" :data="apiFetch" :id="id" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
+    <InfoOverlay :overlayVisibility="overlayVisibility" :connected="connected" :data="apiFetch" :id="id" :added="added" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
   </div>
 </template>
 
@@ -26,7 +26,9 @@ export default {
     img: String,
     score: Number,
     id: Number,
-    index: Number
+    index: Number,
+    connected: Boolean,
+    added: Array
   },
   components: {
     InfoOverlay,

@@ -13,11 +13,15 @@
 
     <v-app-bar app clipped-left class="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
        <div class="flex-grow-1"></div>
-        <v-toolbar-items >
+        <v-toolbar-items v-if="!connected" >
            <v-btn color="#f00000">Inscription</v-btn>
            <v-btn color="#f00000">Connection</v-btn>
+        </v-toolbar-items>
+        <v-toolbar-items v-else >
+           <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
+           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deconnection</v-btn>
         </v-toolbar-items>
     </v-app-bar>
     <v-content class="primary">
@@ -31,7 +35,7 @@
         </v-card>
         <div class="py-2"></div>
         <v-card class="secondary d-flex flex-column mx-9 my-4" v-for="(item,index) in listePerso" :key="index">
-          <userAnimeInfo v-on:updateScore="updateScore" :titre="item.anime.title" :index="index" :img="item.anime.image_url" :score="item.score" :id="item.anime.mal_id"></userAnimeInfo>
+          <userAnimeInfo v-on:updateScore="updateScore" :titre="item.anime.title" :added="isInListPerso(item.anime.mal_id)" :index="index" :img="item.anime.image_url" :score="item.score" :connected="connected" :id="item.anime.mal_id"></userAnimeInfo>
         </v-card>
       </div>
     </v-content>
@@ -57,6 +61,7 @@ export default {
     nbOAV: 0,
     nbEp: 0,
     mean: 0,
+    userName: 'Moran',
     drawer: null,
     connected: true,
     appelBool: false,
@@ -75,7 +80,8 @@ export default {
           'members': 1562628,
           'score': 9.23
         },
-        score: 5
+        score: 5,
+        commentaire: ''
       },
       {
         anime: {
@@ -91,7 +97,8 @@ export default {
           'members': 1291950,
           'score': 9.12
         },
-        score: 4
+        score: 4,
+        commentaire: ''
       },
       { anime: {
         'mal_id': 9253,
@@ -106,7 +113,8 @@ export default {
         'members': 1291950,
         'score': 9.12
       },
-      score: 3
+      score: 3,
+      commentaire: ''
       }
     ]
   }),
@@ -146,6 +154,14 @@ export default {
     },
     initTable: function (data) {
       this.dataFromApi = data.top
+    },
+    isInListPerso: function (idFromAnime) {
+      for (var i in this.listePerso) {
+        if (idFromAnime === this.listePerso[i].anime.mal_id) {
+          return [true, this.listePerso[i].score]
+        }
+      }
+      return [false, 0]
     }
   },
   created () {

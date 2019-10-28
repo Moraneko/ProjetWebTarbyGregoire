@@ -5,9 +5,9 @@
         <v-list-item>
           <div>
             <v-list-item-icon> <v-icon>fas fa-search</v-icon> </v-list-item-icon>
-            <v-text-field hide-details  v-model="searchSTR" prepend-icon="search" single-line @keyup.enter="search()"></v-text-field></div>
+            <v-text-field hide-details class="pb-5"  outlined color="#f00000" v-model="searchSTR" prepend-icon="search" single-line @keyup.enter="search()"></v-text-field></div>
         </v-list-item>
-        <v-list-group no-action sub-group color="f00000" >
+        <v-list-group no-action sub-group color="white" >
         <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>Genres</v-list-item-title>
@@ -19,24 +19,31 @@
             :key="index"
             link
           >
-            <v-list-item-title v-text="item[0]" @click="changeGenre(item[1])" ></v-list-item-title>
-          </v-list-item></div>
+            <v-list-item-content>
+              <v-list-item-title v-text="item[0]" @click="changeGenre(item[1])" ></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          </div>
       </v-list-group>
     </v-list>
     </v-navigation-drawer>
 
     <v-app-bar app clipped-left class="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
        <div class="flex-grow-1"></div>
-        <v-toolbar-items >
+        <v-toolbar-items v-if="!connected" >
            <v-btn color="#f00000">Inscription</v-btn>
            <v-btn color="#f00000">Connection</v-btn>
+        </v-toolbar-items>
+        <v-toolbar-items v-else >
+           <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
+           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deconnection</v-btn>
         </v-toolbar-items>
     </v-app-bar>
     <v-content class="primary">
       <v-card tile class="primary d-flex justify-center">
-        <div><h1 class="d-flex justify-center">Bienvenue sur notre site!</h1><h2>Ici vous pourrez réaliser une liste des animes que vous avez vue afin de donner votre avis et le partager </h2>
+        <div><h1 class="d-flex justify-center">Bienvenue sur notre site!</h1><h2>Ici vous pourrez réaliser une liste des animes que vous avez vus afin de donner votre avis et le partager </h2>
         <h1 v-if="appelBool === true" class="d-flex justify-center">Chargement</h1></div>
       </v-card>
       <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding: 10px;">
@@ -67,6 +74,7 @@ export default {
     source: String
   },
   data: () => ({
+    userName: 'Moran',
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
     indexOfData: 0,
@@ -74,7 +82,7 @@ export default {
     img: '',
     dataFromApi: '',
     searchSTR: '',
-    connected: true,
+    connected: false,
     appelBool: false,
     listePerso: [
       {
