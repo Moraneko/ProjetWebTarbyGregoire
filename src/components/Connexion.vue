@@ -1,0 +1,72 @@
+<template>
+  <v-form
+    ref="form"
+    v-model="valid"
+    :lazy-validation="lazy"
+  >
+    <v-text-field
+      v-model="email"
+      :rules="emailRules"
+      label="E-mail"
+      required
+    ></v-text-field>
+
+    <v-text-field
+    v-model="password"
+    :counter="60"
+    label="mot de passe"
+    type="password"
+    hint="Veuillez rentrer un mot de passe contenant au moins 6 caractères"
+    :rules="passwordRules"
+    required
+    ></v-text-field>
+    <v-btn
+      :disabled="!valid"
+      color="success"
+      class="mr-4"
+      @click="validate"
+      :to="{name: 'Inscription'}"
+    >
+      Valider
+    </v-btn>
+    <v-btn
+      color="error"
+      class="mr-4"
+      @click="reset"
+    >
+      Reinitialiser
+          </v-btn>
+  </v-form>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    valid: true,
+    email: '',
+    emailRules: [
+      v => !!v || 'E-mail requis',
+      v => /.+@.+\..+/.test(v) || 'E-mail doit être valide'
+    ],
+    password: '',
+    passwordRules: [
+      v => !!v || 'Le mot de passe est requis',
+      v => (v && v.length >= 6) || 'Minimum 6 caractères'],
+    select: null,
+    lazy: false
+
+  }),
+
+  methods: {
+    validate () {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true
+        this.$refs.form.reset()
+      }
+    },
+    reset () {
+      this.$refs.form.reset()
+    }
+  }
+}
+</script>
