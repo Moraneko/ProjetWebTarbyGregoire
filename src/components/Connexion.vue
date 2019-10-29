@@ -1,4 +1,5 @@
 <template>
+<v-card heigh="300" width="800" class="px-5 pb-3">
   <v-form
     ref="form"
     v-model="valid"
@@ -37,6 +38,7 @@
       Reinitialiser
           </v-btn>
   </v-form>
+  </v-card>
 </template>
 
 <script>

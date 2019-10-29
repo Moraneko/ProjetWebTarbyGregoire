@@ -49,14 +49,15 @@
 
     </v-expansion-panels>
       <div v-if="added[0]" class="d-flex align-end">
-        <v-textarea class="pl-9 pt-5" label="Commenter" full-width counter outlined maxlength="500" filled no-resize ></v-textarea>
-         <v-btn right color="blue">Valider</v-btn>
+        <v-textarea v-model="commentaire" class="pl-9 pt-5" label="Commenter" full-width counter outlined maxlength="500" filled no-resize ></v-textarea>
+         <v-btn right @click="updateComment" color="blue">Valider</v-btn>
       </div>
     </v-card>
   </v-row>
 </template>
 
 <script>
+import { bus } from '../main'
 
 export default {
   props: {
@@ -67,6 +68,7 @@ export default {
   },
   data: () => ({
     avisLocal: [],
+    commentaire: '',
     avisGlobal: [
       {
         id: 5114,
@@ -95,6 +97,11 @@ export default {
       }
     ]
   }),
+  methods: {
+    updateComment: function () {
+      bus.$emit('updateComment', [this.commentaire, this.id])
+    }
+  },
   created () {
     for (var i in this.avisGlobal) {
       if (this.avisGlobal[i].id === this.id) {

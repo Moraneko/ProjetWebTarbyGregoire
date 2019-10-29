@@ -4,8 +4,8 @@
                 <v-toolbar-title>{{data.title}}</v-toolbar-title>
                 <div class="flex-grow-1"></div>
                 <div v-if="connected" class="d-flex flex-row align-center">
-                  <v-btn text v-if="!added[0]" color="blue" class="d-flex justify-center">Ajouter</v-btn>
-                  <v-btn text v-else class="d-flex justify-center">Retirer</v-btn>
+                  <v-btn color="blue" v-if="!added[0]" @click="addThisAnime2()" class="d-flex justify-center">Ajouter</v-btn>
+                  <v-btn color="#f00000" v-else @click="delThisAnime2()" class="d-flex justify-center">Retirer</v-btn>
                   <v-rating class="d-flex pr-4" v-on:input="updateScore2" :value="added[1]/2" :readonly="!added[0]"  color="amber" half-increments hover size="25"></v-rating>
                   <div class="d-flex pr-5" v-if="added[0]">{{added[1]}}</div>
                 </div>
@@ -42,7 +42,8 @@ export default {
     id: Number,
     data: Object,
     added: Array,
-    connected: Boolean
+    connected: Boolean,
+    index: Number
   },
   components: {
     listInformation
@@ -54,10 +55,18 @@ export default {
   methods: {
     callFermerOverlay () {
       this.$emit('fermerOverlay')
+      bus.$emit('fermerOverlay2')
     },
     updateScore2: function (val) {
       bus.$emit('updateScoreFromOverLay', [val * 2, this.id])
+    },
+    delThisAnime2: function () {
+      bus.$emit('delThisAnime2', this.id)
+    },
+    addThisAnime2: function () {
+      bus.$emit('addThisAnime2', this.id)
     }
+
   }
 }
 </script>
