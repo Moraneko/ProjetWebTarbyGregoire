@@ -25,7 +25,7 @@
       color="success"
       class="mr-4"
       @click="validate"
-      :to="{name: 'Inscription'}"
+      :to="{name: 'Accueil'}"
     >
       Valider
     </v-btn>
@@ -58,7 +58,7 @@ export default {
   }),
 
   methods: {
-    validate () {
+    async validate () {
       if (this.$refs.form.validate()) {
         this.snackbar = true
         this.$refs.form.reset()
@@ -66,6 +66,15 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+    },
+
+    async login () {
+      // connecter l'utilisateur
+      const response = await this.axios.post(this.url + '/api/login', {
+        login: 'admin',
+        password: 'changethispassword'
+      })
+      console.log('response is:', response)
     }
   }
 }

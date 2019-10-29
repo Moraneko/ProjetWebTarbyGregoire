@@ -10,13 +10,13 @@ export default new Router({
     {
       path: '/',
       name: 'Accueil',
-      component: () => import('./components/PageAcc.vue')
+      component: () => import('./components/PageAcceuil.vue')
 
     },
     {
       path: '/Utilisateur',
       name: 'Utilisateur',
-      component: () => import('./components/Connexion.vue')
+      component: () => import('./components/UserPage.vue')
 
     },
     {

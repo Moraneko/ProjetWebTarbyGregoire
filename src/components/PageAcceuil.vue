@@ -33,8 +33,8 @@
       <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
        <div class="flex-grow-1"></div>
         <v-toolbar-items v-if="!connected" >
-           <v-btn color="#f00000">Inscription</v-btn>
-           <v-btn color="#f00000">Connection</v-btn>
+           <v-btn color="#f00000" :to="{name: 'Inscription'}">Inscription</v-btn>
+           <v-btn color="#f00000" :to="{name: 'Connexion'}">Connexion</v-btn>
         </v-toolbar-items>
         <v-toolbar-items v-else >
            <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>

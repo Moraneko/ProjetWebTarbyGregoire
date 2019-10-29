@@ -58,7 +58,7 @@
       :disabled="!valid"
       color="success"
       class="mr-4"
-      @click="validate"
+      @click="login"
     >
       Valider
     </v-btn>
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 export default {
   data: () => ({
     valid: false,
@@ -115,6 +116,25 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+    },
+    async login () {
+      console.log('Zss')
+      // connecter l'utilisateur
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/sigin', {
+        Prenom: self.Prenom,
+        email: self.email,
+        password: self.password
+      }).then(function (response) {
+        if (response.data.connect === 'true') {
+          console.log(response.data.connect)
+          self.$router.push('/')
+        } else {
+          alert(response.data.message)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     Verification () {
       if (this.passwordConfirmed === this.password && this.password.length !== 0) {
