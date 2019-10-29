@@ -11,7 +11,6 @@ export default new Router({
       path: '/',
       name: 'Accueil',
       component: () => import('./components/PageAcceuil.vue')
-
     },
     {
       path: '/Utilisateur',

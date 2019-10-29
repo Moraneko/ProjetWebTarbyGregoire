@@ -21,7 +21,7 @@
         </v-card-text>
     </v-card>
     <loadingOverlay :loading="loading"></loadingOverlay>
-    <InfoOverlay :connected="connected" :overlayVisibility="overlayVisibility" :data="apiFetch" :id="id" :added="added" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
+    <InfoOverlay :connected="connected" :index="index" :overlayVisibility="overlayVisibility" :data="apiFetch" :id="id" :added="added" v-on:fermerOverlay="fermerOverlay"></InfoOverlay>
   </div>
 </template>
 
@@ -36,7 +36,8 @@ export default {
     score: Number,
     id: Number,
     added: Array,
-    connected: Boolean
+    connected: Boolean,
+    index: Number
   },
   components: {
     InfoOverlay,

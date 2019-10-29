@@ -29,7 +29,6 @@ app.use(session({
 }))
 app.use(morgan('dev'))
 app.use(bodyParser.json())
-
 const path = require('path')
 app.use(express.static(path.join(__dirname, '/dist')))
 
@@ -97,7 +96,6 @@ app.post('/api/sigin', (req, res) => {
     res.json({ message: 'L\'adresse email renseigné est deja utilisé', connect: 'false' })
   }
 })
-
 app.get('/api/logout', (req, res) => {
   if (!req.session.userId) {
     res.status(401)
