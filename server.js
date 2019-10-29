@@ -12,6 +12,8 @@ const cors = require('cors')
 const session = require('express-session')
 
 const app = express()
+var user = []
+var id = 0
 
 app.set('view engine', 'vue')
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
@@ -35,10 +37,6 @@ const users = [{
   password: 'changethispassword'
 }]
 
-app.get('/', (req, res) => {
-  Response.render('components/Connexion.vue', { test: 'salut' })
-})
-
 app.get('/api/test', (req, res) => {
   console.log('ce console.log est appelé au bon moment')
   res.json([
@@ -51,7 +49,7 @@ app.get('/api/test', (req, res) => {
     }
   ])
 })
-
+/*
 app.post('/api/login', (req, res) => {
   console.log('req.body', req.body)
   console.log('req.query', req.query)
@@ -75,6 +73,27 @@ app.post('/api/login', (req, res) => {
     res.json({
       message: 'you are already connected'
     })
+  }
+}) */
+
+app.post('/api/sigin', (req, res) => {
+  console.log('ok')
+  var input = req.body
+  var info = { Prenom: input.Prenom,
+    email: input.email,
+    password: input.password,
+    idUser: 0,
+    listePerso: [] }
+  const element = user.find(info => info.email === input.email)
+  if (element === undefined) {
+    id = id + 1
+    info.idUser = id
+    user.push(info)
+    res.json({ message: 'connexion réussi', connect: 'true' })
+    console.log(user)
+  } else {
+    console.log('deja present')
+    res.json({ message: 'L\'adresse email renseigné est deja utilisé', connect: 'false' })
   }
 })
 app.get('/api/logout', (req, res) => {

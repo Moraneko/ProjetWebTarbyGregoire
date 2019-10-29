@@ -29,7 +29,7 @@
       <v-text-field v-model="password" :counter="60" label="mot de passe" type="password" hint="Veuillez rentrer un mot de passe contenant au moins 6 caractères" :rules="passwordRules" required ></v-text-field>
       <v-text-field v-on:blur="Verification" :counter="60" v-model="passwordConfirmed" label="confirmez le mot de passe" type="password" :rules="passwordConfirmedRules" required ></v-text-field>
       <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Vous devez accepter les conditions d\'utilisation']" label="Accepter les conditions d'utilisation" required ></v-checkbox>
-      <v-btn :disabled="!valid" color="success" class="mr-4" :to="{name: 'Accueil'}" @click="validate"> Valider </v-btn>
+      <v-btn :disabled="!valid" color="success" class="mr-4" :to="{name: 'Accueil'}" @click="login"> Valider </v-btn>
       <v-btn color="error" class="mr-4" @click="reset">
         Reinitialiser
             </v-btn>
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 export default {
   data: () => ({
     valid: false,
@@ -79,6 +80,25 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+    },
+    async login () {
+      console.log('Zss')
+      // connecter l'utilisateur
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/sigin', {
+        Prenom: self.Prenom,
+        email: self.email,
+        password: self.password
+      }).then(function (response) {
+        if (response.data.connect === 'true') {
+          console.log(response.data.connect)
+          self.$router.push('/')
+        } else {
+          alert(response.data.message)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     Verification () {
       if (this.passwordConfirmed === this.password && this.password.length !== 0) {
