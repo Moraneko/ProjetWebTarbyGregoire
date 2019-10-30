@@ -24,7 +24,7 @@
     </v-app-bar>
     <v-content class="primary">
       <v-card tile class="primary d-flex justify-center">
-        <div><h1 class="d-flex justify-center">Nom utilisateur</h1><h2 class="pb-5">Liste de vos animes et statistiques.</h2></div>
+        <div><h1 class="d-flex justify-center">{{userName}}</h1><h2 class="pb-5">Liste de vos animes et statistiques.</h2></div>
       </v-card>
       <div class="d-flex flex-column mx-9 px-9">
         <v-card class="secondary mx-9 px-9">
@@ -100,43 +100,49 @@ export default {
     },
     updateScore: function (infoToUpdate) {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/updateScore', {
-        id: self.idUser,
-        animeID: infoToUpdate[1],
-        newScore: infoToUpdate[0]
-      }).then(response => {
-        console.log(response.data)
-        self.listePerso[response.data.indexToUpdate].score = response.data.score
-        bus.$emit('updateOverlayInfo')
-        self.meanScore()
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateScore', {
+          id: self.idUser,
+          animeID: infoToUpdate[1],
+          newScore: infoToUpdate[0]
+        }).then(response => {
+          console.log(response.data)
+          self.listePerso[response.data.indexToUpdate].score = response.data.score
+          bus.$emit('updateOverlayInfo')
+          self.meanScore()
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     delThisAnime2: function (idOfAnime) {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/delAnime', {
-        id: this.idUser,
-        animeID: idOfAnime
-      }).then(function (response) {
-        self.listePerso = response.data
-        self.stat()
-        self.meanScore()
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/delAnime', {
+          id: this.idUser,
+          animeID: idOfAnime
+        }).then(function (response) {
+          self.listePerso = response.data
+          self.stat()
+          self.meanScore()
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     getMyNewList: function () {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/maListe', {
-        id: this.idUser
-      }).then(response => {
-        self.listePerso = response.data
-        self.meanScore()
-        self.stat()
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/maListe', {
+          id: this.idUser
+        }).then(response => {
+          self.listePerso = response.data
+          self.meanScore()
+          self.stat()
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     isInListPerso: function (idFromAnime) {
       for (var i in this.listePerso) {
@@ -162,16 +168,18 @@ export default {
     },
     updateComment: function (newComment) {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/updateComment', {
-        id: self.idUser,
-        animeID: newComment[1],
-        newComment: newComment[0]
-      }).then(response => {
-        self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
-        bus.$emit('updateOverlayInfo')
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateComment', {
+          id: self.idUser,
+          animeID: newComment[1],
+          newComment: newComment[0]
+        }).then(response => {
+          self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
+          bus.$emit('updateOverlayInfo')
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     retour () {
     }
