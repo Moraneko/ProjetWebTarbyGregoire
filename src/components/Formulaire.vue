@@ -29,7 +29,7 @@
       <v-text-field v-model="password" :counter="60" label="mot de passe" type="password" hint="Veuillez rentrer un mot de passe contenant au moins 6 caractères" :rules="passwordRules" required ></v-text-field>
       <v-text-field v-on:blur="Verification" :counter="60" v-model="passwordConfirmed" label="confirmez le mot de passe" type="password" :rules="passwordConfirmedRules" required ></v-text-field>
       <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Vous devez accepter les conditions d\'utilisation']" label="Accepter les conditions d'utilisation" required ></v-checkbox>
-      <v-btn :disabled="!valid" color="success" class="mr-4" :to="{name: 'Accueil'}" @click="login"> Valider </v-btn>
+      <v-btn :disabled="!valid" color="success" class="mr-4" @click="login"> Valider </v-btn>
       <v-btn color="error" class="mr-4" @click="reset">
         Reinitialiser
             </v-btn>
