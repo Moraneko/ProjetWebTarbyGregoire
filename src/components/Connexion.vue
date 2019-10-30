@@ -42,8 +42,6 @@
 
 <script>
 import Vue from 'vue'
-import { bus } from '../main'
-
 export default {
   data: () => ({
     valid: true,
@@ -70,7 +68,6 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
-      bus.$emit('fermerOverlayConnexion')
     },
 
     async login () {
@@ -80,14 +77,11 @@ export default {
         email: self.email,
         password: self.password
       }).then(function (response) {
-        console.log(response)
         if (response.data.connect === 'true') {
-          console.log(response.data.session)
           sessionStorage.setItem('idUser', response.data.session.idUser)
           sessionStorage.setItem('user', response.data.session.user)
           sessionStorage.setItem('connecte', response.data.session.connecte)
-          console.log(sessionStorage.getItem('user'))
-          bus.$emit('fermerOverlayConnexion')
+          self.$router.push('/Utilisateur')
         } else {
           alert(response.data.message)
         }

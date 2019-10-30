@@ -13,45 +13,7 @@ const session = require('express-session')
 var cookieParser = require('cookie-parser')
 
 const app = express()
-var user = [{ user: 'MORAN',
-  email: 'moranmail.fr',
-  password: 'Motdepasse',
-  idUser: 1,
-  listePerso: [{
-    score: 5,
-    commentaire: 'Nice',
-    anime: {
-      mal_id: 5114,
-      rank: 1,
-      title: 'Fullmetal Alchemist: Brotherhood',
-      url: 'https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood',
-      image_url: 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg?s=faffcb677a5eacd17bf761edd78bfb3f',
-      type: 'TV',
-      episodes: 64,
-      start_date: 'Apr 2009',
-      end_date: 'Jul 2010',
-      members: 1562628,
-      score: 9.23
-    }
-  },
-  {
-    score: 3,
-    commentaire: 'Ok',
-    anime: {
-      mal_id: 9253,
-      rank: 2,
-      title: 'Steins;Gate',
-      url: 'https://myanimelist.net/anime/9253/Steins_Gate',
-      image_url: 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
-      type: 'TV',
-      episodes: 24,
-      start_date: 'Apr 2011',
-      end_date: 'Sep 2011',
-      members: 1291950,
-      score: 9.12
-    }
-  }]
-}]
+var user = []
 var id = 0
 
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
@@ -71,24 +33,6 @@ app.use(bodyParser.json())
 const path = require('path')
 app.use(express.static(path.join(__dirname, '/dist')))
 
-const users = [{
-  username: 'admin',
-  password: 'changethispassword'
-}]
-
-app.get('/api/test', (req, res) => {
-  console.log('ce console.log est appelé au bon moment')
-  res.json([
-    {
-      title: 'truc',
-      content: 'machin'
-    }, {
-      title: 'truc2',
-      content: 'machin2'
-    }
-  ])
-})
-
 app.post('/api/sigin', (req, res) => {
   console.log('ok')
   var input = req.body
@@ -103,9 +47,7 @@ app.post('/api/sigin', (req, res) => {
     info.idUser = id
     user.push(info)
     res.json({ message: 'inscription réussie', connect: 'true' })
-    console.log(user)
   } else {
-    console.log('deja present')
     res.json({ message: 'L\'adresse email renseignée est deja utilisée', connect: 'false' })
   }
 })
@@ -185,13 +127,10 @@ app.post('/api/getComment', (req, res) => {
     }
   }
   res.json(commentList)
-  })
+})
 
 app.post('/api/login', (req, res) => {
-  console.log('ok')
   var input = req.body
-  var info = { email: input.email,
-    password: input.password }
   const element = user.find(info => info.email === input.email)
   if (element === undefined) {
     res.json({ message: 'Il n\'existe aucun compte associé à cette E-mail', connect: 'false', session: 'false' })
@@ -203,18 +142,10 @@ app.post('/api/login', (req, res) => {
   }
 })
 
-app.get('/api/logout', (req, res) => {
-  if (!req.session.userId) {
-    res.status(401)
-    res.json({
-      message: 'you are already disconnected'
-    })
-  } else {
-    req.session.userId = 0
-    res.json({
-      message: 'you are now disconnected'
-    })
-  }
+app.post('/api/logout', (req, res) => {
+  res.json({ message: 'Vous etes déconnecté',
+    connect: 'false',
+    session: { 'user': '', 'idUser': -1, 'connecte': 'false' } })
 })
 
 app.get('/api/admin', (req, res) => {
