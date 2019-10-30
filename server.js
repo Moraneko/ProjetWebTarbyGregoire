@@ -16,10 +16,10 @@ var user = []
 var id = 0
 
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:8080'
-}))
+app.use(cors())
+const path = require('path')
+app.use(express.static(path.join(__dirname, 'dist/')))
+
 app.use(session({
   secret: 'Moran', // changez cette valeur
   resave: false,

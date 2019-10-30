@@ -4,7 +4,7 @@
     <v-list>
       <v-list-item @click="retour()" :to="{name: 'Accueil'}" color="black">
           <div class="d-flex flex-row primary align-center">
-            <v-icon color="white">home</v-icon> <h3 class="d-flex px-5" style="color: white;">Acceuil</h3>
+            <v-icon color="white">home</v-icon> <h3 class="d-flex px-5" style="color: white;">Accueil</h3>
             </div>
         </v-list-item>
     </v-list>
