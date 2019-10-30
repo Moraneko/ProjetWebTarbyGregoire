@@ -101,7 +101,7 @@ export default {
     updateScore: function (infoToUpdate) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/updateScore', {
+        Vue.axios.post('/api/updateScore', {
           id: self.idUser,
           animeID: infoToUpdate[1],
           newScore: infoToUpdate[0]
@@ -118,7 +118,7 @@ export default {
     delThisAnime2: function (idOfAnime) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/delAnime', {
+        Vue.axios.post('/api/delAnime', {
           id: this.idUser,
           animeID: idOfAnime
         }).then(function (response) {
@@ -133,7 +133,7 @@ export default {
     getMyNewList: function () {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/maListe', {
+        Vue.axios.post('/api/maListe', {
           id: this.idUser
         }).then(response => {
           self.listePerso = response.data
@@ -155,7 +155,7 @@ export default {
     async logout () {
       // déconnecter l'utilisateur
       var self = this
-      Vue.axios.post('http://localhost:4000/api/logout', {}).then(function (response) {
+      Vue.axios.post('/api/logout', {}).then(function (response) {
         if (response.data.connect === 'false') {
           sessionStorage.setItem('idUser', response.data.session.idUser)
           sessionStorage.setItem('user', response.data.session.user)
@@ -169,7 +169,7 @@ export default {
     updateComment: function (newComment) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/updateComment', {
+        Vue.axios.post('/api/updateComment', {
           id: self.idUser,
           animeID: newComment[1],
           newComment: newComment[0]

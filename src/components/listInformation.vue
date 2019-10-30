@@ -75,7 +75,7 @@ export default {
   methods: {
     getComment: function () {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/getComment', {
+      Vue.axios.post('/api/getComment', {
         animeID: this.id
       }).then(function (response) {
         self.avisLocal = response.data

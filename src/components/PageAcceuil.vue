@@ -115,7 +115,7 @@ export default {
     updateScore: function (infoToUpdate) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/updateScore', {
+        Vue.axios.post('/api/updateScore', {
           id: this.idUser,
           animeID: infoToUpdate[1],
           newScore: infoToUpdate[0]
@@ -150,7 +150,7 @@ export default {
     updateComment: function (newComment) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/updateComment', {
+        Vue.axios.post('/api/updateComment', {
           id: self.idUser,
           animeID: newComment[1],
           newComment: newComment[0]
@@ -165,7 +165,7 @@ export default {
     delThisAnime: function (idOfAnime) {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/delAnime', {
+        Vue.axios.post('/api/delAnime', {
           id: self.idUser,
           animeID: idOfAnime
         }).then(response => {
@@ -178,7 +178,7 @@ export default {
     getMyNewList: function () {
       var self = this
       if (self.idUser > 0) {
-        Vue.axios.post('http://localhost:4000/api/maListe', {
+        Vue.axios.post('/api/maListe', {
           id: this.idUser
         }).then(response => {
           this.listePerso = response.data
@@ -191,7 +191,7 @@ export default {
       var self = this
       if (self.idUser > 0) {
         var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":0,"commentaire":""}')
-        Vue.axios.post('http://localhost:4000/api/addAnime', {
+        Vue.axios.post('/api/addAnime', {
           id: this.idUser,
           newData: obj
         }).then(response => {
@@ -214,7 +214,7 @@ export default {
     },
     async logout () {
       // déconnecter l'utilisateur
-      Vue.axios.post('http://localhost:4000/api/logout').then(function (response) {
+      Vue.axios.post('/api/logout').then(function (response) {
         if (response.data.connect === 'false') {
           sessionStorage.setItem('idUser', response.data.session.idUser)
           sessionStorage.setItem('user', response.data.session.user)
