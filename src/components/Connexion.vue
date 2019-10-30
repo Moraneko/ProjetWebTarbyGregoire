@@ -25,8 +25,7 @@
       :disabled="!valid"
       color="success"
       class="mr-4"
-      @click="validate"
-      :to="{name: 'Accueil'}"
+      @click="login"
     >
       Valider
     </v-btn>
@@ -42,6 +41,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { bus } from '../main'
 
 export default {
@@ -75,11 +75,25 @@ export default {
 
     async login () {
       // connecter l'utilisateur
-      const response = await this.axios.post(this.url + '/api/login', {
-        login: 'admin',
-        password: 'changethispassword'
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/login', {
+        email: self.email,
+        password: self.password
+      }).then(function (response) {
+        console.log(response)
+        if (response.data.connect === 'true') {
+          console.log(response.data.session)
+          sessionStorage.setItem('idUser', response.data.session.idUser)
+          sessionStorage.setItem('user', response.data.session.user)
+          sessionStorage.setItem('connecte', response.data.session.connecte)
+          console.log(sessionStorage.getItem('user'))
+          bus.$emit('fermerOverlayConnexion')
+        } else {
+          alert(response.data.message)
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
-      console.log('response is:', response)
     }
   }
 }

@@ -79,12 +79,12 @@ export default {
   data: () => ({
     overlayVisibility: false,
     userName: '',
+    idUser: -1,
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
-    idUser: 1,
     dataFromApi: '',
     searchSTR: '',
-    connected: true,
+    connected: false,
     appelBool: false,
     listePerso: [],
     genre: [
@@ -200,6 +200,16 @@ export default {
     }
   },
   created () {
+    if (sessionStorage.getItem('idUser') === null) {
+      sessionStorage.setItem('idUser', -1)
+      sessionStorage.setItem('user', '')
+      sessionStorage.setItem('connecte', false)
+    }
+    this.connected = sessionStorage.getItem('connecte')
+    console.log(sessionStorage.getItem('connecte'))
+    this.userName = sessionStorage.getItem('user')
+    this.idUser = sessionStorage.getItem('idUser')
+
     this.$vuetify.theme.dark = true
     bus.$on('fermerOverlayConnexion', () => {
       this.overlayVisibility = false

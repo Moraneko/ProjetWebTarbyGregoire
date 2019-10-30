@@ -10,6 +10,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 const session = require('express-session')
+var cookieParser = require('cookie-parser')
 
 const app = express()
 var user = [{ user: 'MORAN',
@@ -53,14 +54,14 @@ var user = [{ user: 'MORAN',
 }]
 var id = 0
 
-app.set('view engine', 'vue')
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
 app.use(cors({
   credentials: true,
   origin: 'http://localhost:8080'
 }))
+app.use(cookieParser())
 app.use(session({
-  secret: 'blablabla', // changez cette valeur
+  secret: 'Moran', // changez cette valeur
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // ne changez que si vous avez activé le https
@@ -101,11 +102,11 @@ app.post('/api/sigin', (req, res) => {
     id = id + 1
     info.idUser = id
     user.push(info)
-    res.json({ message: 'Inscription réussi', connect: 'true' })
+    res.json({ message: 'inscription réussie', connect: 'true' })
     console.log(user)
   } else {
     console.log('deja present')
-    res.json({ message: 'L\'adresse email renseigné est deja utilisé', connect: 'false' })
+    res.json({ message: 'L\'adresse email renseignée est deja utilisée', connect: 'false' })
   }
 })
 app.post('/api/maListe', (req, res) => {
@@ -184,6 +185,22 @@ app.post('/api/getComment', (req, res) => {
     }
   }
   res.json(commentList)
+  })
+
+app.post('/api/login', (req, res) => {
+  console.log('ok')
+  var input = req.body
+  var info = { email: input.email,
+    password: input.password }
+  const element = user.find(info => info.email === input.email)
+  if (element === undefined) {
+    res.json({ message: 'Il n\'existe aucun compte associé à cette E-mail', connect: 'false', session: 'false' })
+  } else if (element.password === input.password) {
+    req.session.userSession = { 'user': element.user, 'idUser': element.idUser, 'connecte': 'true' }
+    res.json({ message: 'Vous etes connecté', connect: 'true', session: req.session.userSession })
+  } else {
+    res.json({ message: 'Mot de passe incorect', connect: 'false', session: 'user:' })
+  }
 })
 
 app.get('/api/logout', (req, res) => {

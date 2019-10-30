@@ -82,14 +82,13 @@ export default {
       this.$refs.form.reset()
     },
     async login () {
-      console.log('Zss')
       // connecter l'utilisateur
       var self = this
       Vue.axios.post('http://localhost:4000/api/sigin', {
         Prenom: self.Prenom,
         email: self.email,
         password: self.password
-      }).then(function (response) {
+      }).then(function (response, request) {
         if (response.data.connect === 'true') {
           console.log(response.data.connect)
           self.$router.push('/')

@@ -166,6 +166,14 @@ export default {
   },
 
   created () {
+    if (sessionStorage.getItem('idUser') === null) {
+      sessionStorage.setItem('idUser', -1)
+      sessionStorage.setItem('user', '')
+      sessionStorage.setItem('connecte', false)
+    }
+    this.connected = sessionStorage.getItem('connecte')
+    this.userName = sessionStorage.getItem('user')
+    this.idUser = sessionStorage.getItem('idUser')
     this.$vuetify.theme.dark = true
     this.getMyNewList()
 
