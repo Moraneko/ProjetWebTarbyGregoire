@@ -32,13 +32,13 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
        <div class="flex-grow-1"></div>
-        <v-toolbar-items v-if="!connected" >
-           <v-btn color="#f00000">Inscription</v-btn>
-           <v-btn color="#f00000">Connection</v-btn>
+        <v-toolbar-items v-if="!connected">
+           <v-btn :to="{name: 'Inscription'}" color="#f00000">Inscription</v-btn>
+           <v-btn @click="ouvrirOverlayConnection" color="#f00000">Connexion</v-btn>
         </v-toolbar-items>
         <v-toolbar-items v-else >
-           <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
-           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deconnection</v-btn>
+           <v-btn color="#f00000" :to="{name: 'Utilisateur'}" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
+           <v-btn color="#f00000" @click="logout"><v-icon class="px-1 " >mdi-close</v-icon>Deconnexion</v-btn>
         </v-toolbar-items>
     </v-app-bar>
     <v-content class="primary">
@@ -47,15 +47,16 @@
         <h1 v-if="appelBool === true" class="d-flex justify-center">Chargement</h1></div>
       </v-card>
       <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding: 10px;">
+        <ConnectOverlay :overlayVisibility="overlayVisibility" @fermerOverlay="fermerOverlayConnection" />
         <v-card
-          v-for="item in dataFromApi"
+          v-for="(item,index) in dataFromApi"
           :key="item.id"
           class="d-flex justify-space-around mb-6 primary"
           tile
           height="500"
           >
-          <CarteInfo v-if="item.rated === undefined " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore"></CarteInfo>
-          <CarteInfo v-else-if="item.rated !== 'Rx' " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore"></CarteInfo>
+          <CarteInfo :index="index" v-if="item.rated === undefined " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore" @delThisAnime="delThisAnime" @addThisAnime="addThisAnime"></CarteInfo>
+          <CarteInfo :index="index" v-else-if="item.rated !== 'Rx' " :titre="item.title" :img="item.image_url" :connected="connected" :score="item.score" :id="item.mal_id" :added="isInListPerso(item.mal_id)" @updateScore="updateScore" @delThisAnime="delThisAnime" @addThisAnime="addThisAnime"></CarteInfo>
         </v-card>
       </div>
     </v-content>
@@ -67,72 +68,25 @@
 
 <script>
 import CarteInfo from './CarteInfo'
+import ConnectOverlay from './ConnectOverlay'
 import { bus } from '../main'
+import Vue from 'vue'
 
 export default {
   props: {
     source: String
   },
   data: () => ({
-    userName: 'Moran',
+    overlayVisibility: false,
+    userName: sessionStorage.getItem('user'),
+    idUser: JSON.parse(sessionStorage.getItem('idUser')),
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
-    indexOfData: 0,
-    titre: '',
-    img: '',
     dataFromApi: '',
     searchSTR: '',
-    connected: false,
+    connected: JSON.parse(sessionStorage.getItem('connecte')),
     appelBool: false,
-    listePerso: [
-      {
-        anime: {
-          'mal_id': 5114,
-          'rank': 1,
-          'title': 'Fullmetal Alchemist: Brotherhood',
-          'url': 'https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood',
-          'image_url': 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg?s=faffcb677a5eacd17bf761edd78bfb3f',
-          'type': 'TV',
-          'episodes': 64,
-          'start_date': 'Apr 2009',
-          'end_date': 'Jul 2010',
-          'members': 1562628,
-          'score': 9.23
-        },
-        score: 5
-      },
-      {
-        anime: {
-          'mal_id': 9253,
-          'rank': 2,
-          'title': 'Steins;Gate',
-          'url': 'https://myanimelist.net/anime/9253/Steins_Gate',
-          'image_url': 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
-          'type': 'TV',
-          'episodes': 24,
-          'start_date': 'Apr 2011',
-          'end_date': 'Sep 2011',
-          'members': 1291950,
-          'score': 9.12
-        },
-        score: 4
-      },
-      { anime: {
-        'mal_id': 9253,
-        'rank': 2,
-        'title': 'Steins;Gate',
-        'url': 'https://myanimelist.net/anime/9253/Steins_Gate',
-        'image_url': 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
-        'type': 'TV',
-        'episodes': 24,
-        'start_date': 'Apr 2011',
-        'end_date': 'Sep 2011',
-        'members': 1291950,
-        'score': 9.12
-      },
-      score: 3
-      }
-    ],
+    listePerso: [],
     genre: [
       ['Action', 1], ['Aventure', 2], ['Comédie', 4],
       ['Mysère', 7], ['Drama', 8], ['Fantaisie', 10],
@@ -145,17 +99,33 @@ export default {
     ]
   }),
   components: {
-    CarteInfo
+    CarteInfo,
+    ConnectOverlay
   },
   methods: {
     initTable: function (data) {
       this.dataFromApi = data.top
     },
+    fermerOverlayConnection: function () {
+      this.overlayVisibility = false
+    },
+    ouvrirOverlayConnection: function () {
+      this.overlayVisibility = true
+    },
     updateScore: function (infoToUpdate) {
-      for (var i in this.listePerso) {
-        if (infoToUpdate[1] === this.listePerso[i].anime.mal_id) {
-          this.listePerso[i].score = infoToUpdate[0]
-        }
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateScore', {
+          id: this.idUser,
+          animeID: infoToUpdate[1],
+          newScore: infoToUpdate[0]
+        }).then(response => {
+          console.log(response.data)
+          this.listePerso[response.data.indexToUpdate].score = response.data.score
+          bus.$emit('updateOverlayInfo')
+        }).catch(function (error) {
+          console.log(error)
+        })
       }
     },
     isInListPerso: function (idFromAnime) {
@@ -177,6 +147,60 @@ export default {
         console.log(err)
       })
     },
+    updateComment: function (newComment) {
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateComment', {
+          id: self.idUser,
+          animeID: newComment[1],
+          newComment: newComment[0]
+        }).then(response => {
+          self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
+          bus.$emit('updateOverlayInfo')
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
+    },
+    delThisAnime: function (idOfAnime) {
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/delAnime', {
+          id: self.idUser,
+          animeID: idOfAnime
+        }).then(response => {
+          self.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
+    },
+    getMyNewList: function () {
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/maListe', {
+          id: this.idUser
+        }).then(response => {
+          this.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
+    },
+    addThisAnime: function (indexOfAnime) {
+      var self = this
+      if (self.idUser > 0) {
+        var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":0,"commentaire":""}')
+        Vue.axios.post('http://localhost:4000/api/addAnime', {
+          id: this.idUser,
+          newData: obj
+        }).then(response => {
+          this.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
+    },
     search: function () {
       this.allBool = true
       fetch(this.linkApi + 'search/anime?q=' + this.searchSTR.replace(' ', '%20') + '&page=1?rated=g,pg,pg13,r17').then(response => {
@@ -187,12 +211,42 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    async logout () {
+      // déconnecter l'utilisateur
+      Vue.axios.post('http://localhost:4000/api/logout').then(function (response) {
+        if (response.data.connect === 'false') {
+          sessionStorage.setItem('idUser', response.data.session.idUser)
+          sessionStorage.setItem('user', response.data.session.user)
+          sessionStorage.setItem('connecte', response.data.session.connecte)
+          document.location.reload(true)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
+
   },
   created () {
+    if (sessionStorage.getItem('idUser') === null) {
+      sessionStorage.setItem('idUser', -1)
+      sessionStorage.setItem('user', '')
+      sessionStorage.setItem('connecte', false)
+    }
+
     this.$vuetify.theme.dark = true
+
     bus.$on('updateScoreFromOverLay', (infoFromOverlay) => {
       this.updateScore(infoFromOverlay)
+    })
+    bus.$on('delThisAnime2', (idToDel) => {
+      this.delThisAnime(idToDel)
+    })
+    bus.$on('addThisAnime2', (indexToAdd) => {
+      this.addThisAnime(indexToAdd)
+    })
+    bus.$on('updateComment', (val) => {
+      this.updateComment([val[0], val[1]])
     })
     fetch('https://api.jikan.moe/v3/top/anime/1').then(response => {
       return response.json()
@@ -201,6 +255,7 @@ export default {
     }).catch(err => {
       console.log(err)
     })
+    this.getMyNewList()
   }
 }
 </script>

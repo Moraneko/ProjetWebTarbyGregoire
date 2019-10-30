@@ -19,6 +19,7 @@
 <script>
 import InfoOverlay from './InfoOverlay'
 import loadingOverlay from './loadingOverlay'
+import { bus } from '../main'
 
 export default {
   props: {
@@ -41,7 +42,7 @@ export default {
   }),
   methods: {
     updateScore: function (val) {
-      this.$emit('updateScore', [val * 2, this.index])
+      this.$emit('updateScore', [val * 2, this.id])
     },
     ouvrirOverlay () {
       this.loading = true
@@ -58,6 +59,13 @@ export default {
     fermerOverlay () {
       this.overlayVisibility = false
     }
+  },
+  created () {
+    bus.$on('delThisAnime2', (idToDel) => {
+      if (idToDel === this.id) {
+        this.fermerOverlay()
+      }
+    })
   }
 }
 </script>

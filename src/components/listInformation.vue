@@ -49,58 +49,51 @@
 
     </v-expansion-panels>
       <div v-if="added[0]" class="d-flex align-end">
-        <v-textarea class="pl-9 pt-5" label="Commenter" full-width counter outlined maxlength="500" filled no-resize ></v-textarea>
-         <v-btn right color="blue">Valider</v-btn>
+        <v-textarea v-model="commentaire" class="pl-9 pt-5" label="Commenter" full-width counter outlined maxlength="500" filled no-resize ></v-textarea>
+         <v-btn right @click="updateComment" color="blue">Valider</v-btn>
       </div>
     </v-card>
   </v-row>
 </template>
 
 <script>
+import { bus } from '../main'
+import Vue from 'vue'
 
 export default {
   props: {
     data: Object,
+    overlayVisibility: Boolean,
     id: Number,
     connected: Boolean,
     added: Array
   },
   data: () => ({
     avisLocal: [],
-    avisGlobal: [
-      {
-        id: 5114,
-        avis: [
-          {
-            user: 'Jean',
-            score: 10,
-            commentaire: 'Incroyable'
-          },
-          {
-            user: 'Pierre',
-            score: 6,
-            commentaire: 'Pas mauvais'
-          }
-        ]
-      },
-      {
-        id: 9253,
-        avis: [
-          {
-            user: 'Jean',
-            score: 9,
-            commentaire: 'Impressionant'
-          }
-        ]
-      }
-    ]
+    commentaire: ''
   }),
-  created () {
-    for (var i in this.avisGlobal) {
-      if (this.avisGlobal[i].id === this.id) {
-        this.avisLocal = this.avisGlobal[i].avis
-      }
+  methods: {
+    getComment: function () {
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/getComment', {
+        animeID: this.id
+      }).then(function (response) {
+        self.avisLocal = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    updateComment: function () {
+      bus.$emit('updateComment', [this.commentaire, this.id])
     }
+  },
+  created () {
+    this.getComment()
+    bus.$on('updateOverlayInfo', () => {
+      if (this.overlayVisibility) {
+        this.getComment()
+      }
+    })
   }
 
 }

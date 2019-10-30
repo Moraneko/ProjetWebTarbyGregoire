@@ -1,4 +1,5 @@
 <template>
+<v-card heigh="300" width="800" class="px-5 pb-3">
   <v-form
     ref="form"
     v-model="valid"
@@ -24,8 +25,7 @@
       :disabled="!valid"
       color="success"
       class="mr-4"
-      @click="validate"
-      :to="{name: 'Inscription'}"
+      @click="login"
     >
       Valider
     </v-btn>
@@ -37,9 +37,11 @@
       Reinitialiser
           </v-btn>
   </v-form>
+  </v-card>
 </template>
 
 <script>
+import Vue from 'vue'
 export default {
   data: () => ({
     valid: true,
@@ -58,7 +60,7 @@ export default {
   }),
 
   methods: {
-    validate () {
+    async validate () {
       if (this.$refs.form.validate()) {
         this.snackbar = true
         this.$refs.form.reset()
@@ -66,6 +68,26 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+    },
+
+    async login () {
+      // connecter l'utilisateur
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/login', {
+        email: self.email,
+        password: self.password
+      }).then(function (response) {
+        if (response.data.connect === 'true') {
+          sessionStorage.setItem('idUser', response.data.session.idUser)
+          sessionStorage.setItem('user', response.data.session.user)
+          sessionStorage.setItem('connecte', response.data.session.connecte)
+          self.$router.push('/Utilisateur')
+        } else {
+          alert(response.data.message)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }
