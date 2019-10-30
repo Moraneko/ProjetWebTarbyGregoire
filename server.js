@@ -28,9 +28,6 @@ app.use(session({
 }))
 app.use(morgan('dev'))
 app.use(bodyParser.json())
-const path = require('path')
-app.use(express.static(path.join(__dirname, '/dist')))
-
 app.post('/api/sigin', (req, res) => {
   console.log('ok')
   var input = req.body
