@@ -79,6 +79,7 @@ export default {
   data: () => ({
     overlayVisibility: false,
     userName: 'Moran',
+    idUser: -1,
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
     indexOfData: 0,
@@ -86,7 +87,7 @@ export default {
     img: '',
     dataFromApi: '',
     searchSTR: '',
-    connected: true,
+    connected: false,
     appelBool: false,
     listePerso: [],
     genre: [
@@ -165,6 +166,16 @@ export default {
     }
   },
   created () {
+    if (sessionStorage.getItem('idUser') === null) {
+      sessionStorage.setItem('idUser', -1)
+      sessionStorage.setItem('user', '')
+      sessionStorage.setItem('connecte', false)
+    }
+    this.connected = sessionStorage.getItem('connecte')
+    console.log(sessionStorage.getItem('connecte'))
+    this.userName = sessionStorage.getItem('user')
+    this.idUser = sessionStorage.getItem('idUser')
+
     this.$vuetify.theme.dark = true
     bus.$on('updateScoreFromOverLay', (infoFromOverlay) => {
       this.updateScore(infoFromOverlay)
@@ -174,6 +185,9 @@ export default {
     })
     bus.$on('addThisAnime2', (indexToAdd) => {
       this.addThisAnime(indexToAdd)
+    })
+    bus.$on('fermerOverlayConnexion', () => {
+      this.overlayVisibility = false
     })
     fetch('https://api.jikan.moe/v3/top/anime/1').then(response => {
       return response.json()
