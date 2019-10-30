@@ -83,7 +83,7 @@ export default {
     async login () {
       // connecter l'utilisateur
       var self = this
-      Vue.axios.post('http://localhost:4000/api/sigin', {
+      Vue.axios.post('api/sigin', {
         Prenom: self.Prenom,
         email: self.email,
         password: self.password
