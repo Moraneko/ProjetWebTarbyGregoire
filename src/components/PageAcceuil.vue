@@ -79,7 +79,7 @@ export default {
   data: () => ({
     overlayVisibility: false,
     userName: sessionStorage.getItem('user'),
-    idUser: sessionStorage.getItem('idUser'),
+    idUser: JSON.parse(sessionStorage.getItem('idUser')),
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
     dataFromApi: '',
@@ -113,17 +113,20 @@ export default {
       this.overlayVisibility = true
     },
     updateScore: function (infoToUpdate) {
-      Vue.axios.post('http://localhost:4000/api/updateScore', {
-        id: this.idUser,
-        animeID: infoToUpdate[1],
-        newScore: infoToUpdate[0]
-      }).then(response => {
-        console.log(response.data)
-        this.listePerso[response.data.indexToUpdate].score = response.data.score
-        bus.$emit('updateOverlayInfo')
-      }).catch(function (error) {
-        console.log(error)
-      })
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateScore', {
+          id: this.idUser,
+          animeID: infoToUpdate[1],
+          newScore: infoToUpdate[0]
+        }).then(response => {
+          console.log(response.data)
+          this.listePerso[response.data.indexToUpdate].score = response.data.score
+          bus.$emit('updateOverlayInfo')
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     isInListPerso: function (idFromAnime) {
       for (var i in this.listePerso) {
@@ -146,46 +149,57 @@ export default {
     },
     updateComment: function (newComment) {
       var self = this
-      Vue.axios.post('http://localhost:4000/api/updateComment', {
-        id: self.idUser,
-        animeID: newComment[1],
-        newComment: newComment[0]
-      }).then(response => {
-        self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
-        bus.$emit('updateOverlayInfo')
-      }).catch(function (error) {
-        console.log(error)
-      })
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/updateComment', {
+          id: self.idUser,
+          animeID: newComment[1],
+          newComment: newComment[0]
+        }).then(response => {
+          self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
+          bus.$emit('updateOverlayInfo')
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     delThisAnime: function (idOfAnime) {
-      Vue.axios.post('http://localhost:4000/api/delAnime', {
-        id: this.idUser,
-        animeID: idOfAnime
-      }).then(response => {
-        this.listePerso = response.data
-      }).catch(function (error) {
-        console.log(error)
-      })
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/delAnime', {
+          id: self.idUser,
+          animeID: idOfAnime
+        }).then(response => {
+          self.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     getMyNewList: function () {
-      Vue.axios.post('http://localhost:4000/api/maListe', {
-        id: this.idUser
-      }).then(response => {
-        this.listePerso = response.data
-      }).catch(function (error) {
-        console.log(error)
-      })
+      var self = this
+      if (self.idUser > 0) {
+        Vue.axios.post('http://localhost:4000/api/maListe', {
+          id: this.idUser
+        }).then(response => {
+          this.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     addThisAnime: function (indexOfAnime) {
-      var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":0,"commentaire":""}')
-      Vue.axios.post('http://localhost:4000/api/addAnime', {
-        id: this.idUser,
-        newData: obj
-      }).then(response => {
-        this.listePerso = response.data
-      }).catch(function (error) {
-        console.log(error)
-      })
+      var self = this
+      if (self.idUser > 0) {
+        var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":0,"commentaire":""}')
+        Vue.axios.post('http://localhost:4000/api/addAnime', {
+          id: this.idUser,
+          newData: obj
+        }).then(response => {
+          this.listePerso = response.data
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }
     },
     search: function () {
       this.allBool = true

@@ -2,7 +2,7 @@
  <v-app id="inspire">
    <v-navigation-drawer v-model="drawer" app clipped width="200" class="primary">
     <v-list>
-      <v-list-item @click="retour" :to="{name: 'Accueil'}" color="black">
+      <v-list-item @click="retour()" :to="{name: 'Accueil'}" color="black">
           <div class="d-flex flex-row primary align-center">
             <v-icon color="white">home</v-icon> <h3 class="d-flex px-5" style="color: white;">Acceuil</h3>
             </div>
@@ -14,8 +14,6 @@
       <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
        <div class="flex-grow-1"></div>
         <v-toolbar-items v-if="!connected" >
-           <v-btn color="#f00000">Inscription</v-btn>
-           <v-btn color="#f00000">Connexion</v-btn>
         </v-toolbar-items>
         <v-toolbar-items v-else >
            <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
@@ -42,6 +40,7 @@ import Vue from 'vue'
 export default {
   data: () => ({
     valid: false,
+    drawer: null,
     name: '',
     confirmation: '',
     nameRules: [

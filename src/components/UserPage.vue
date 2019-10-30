@@ -6,11 +6,9 @@
           <div class="d-flex flex-row align-center">
             <v-icon color="white">home</v-icon> <h3 class="d-flex px-5" style="color: white;">Acceuil</h3>
             </div>
-
         </v-list-item>
     </v-list>
     </v-navigation-drawer>
-
     <v-app-bar app clipped-left class="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Site Tarby-Grégoire</v-toolbar-title>
@@ -64,7 +62,7 @@ export default {
     nbEp: 0,
     mean: 0,
     userName: sessionStorage.getItem('user'),
-    idUser: sessionStorage.getItem('idUser'),
+    idUser: JSON.parse(sessionStorage.getItem('idUser')),
     drawer: null,
     connected: JSON.parse(sessionStorage.getItem('connecte')),
     appelBool: false,
@@ -151,7 +149,7 @@ export default {
     async logout () {
       // déconnecter l'utilisateur
       var self = this
-      Vue.axios.post('http://localhost:4000/api/logout').then(function (response) {
+      Vue.axios.post('http://localhost:4000/api/logout', {}).then(function (response) {
         if (response.data.connect === 'false') {
           sessionStorage.setItem('idUser', response.data.session.idUser)
           sessionStorage.setItem('user', response.data.session.user)

@@ -10,7 +10,6 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 const session = require('express-session')
-var cookieParser = require('cookie-parser')
 
 const app = express()
 var user = []
@@ -21,7 +20,6 @@ app.use(cors({
   credentials: true,
   origin: 'http://localhost:8080'
 }))
-app.use(cookieParser())
 app.use(session({
   secret: 'Moran', // changez cette valeur
   resave: false,
@@ -59,6 +57,7 @@ app.post('/api/maListe', (req, res) => {
   }
 })
 app.post('/api/addAnime', (req, res) => {
+  console.log(user)
   for (var i in user) {
     if (req.body.id === user[i].idUser) {
       user[i].listePerso.push(req.body.newData)
