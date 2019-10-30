@@ -25,7 +25,7 @@
                 </div>
                 <v-divider class="mx-4" vertical></v-divider>
                 <div class="d-flex  flex-column">
-                    <listInformation :data="data" :id="id" :connected="connected" :added="added"></listInformation>
+                    <listInformation :data="data" :id="id" :connected="connected" :overlayVisibility="overlayVisibility" :added="added"></listInformation>
                 </div>
             </div>
         </v-card>
@@ -64,7 +64,7 @@ export default {
       bus.$emit('delThisAnime2', this.id)
     },
     addThisAnime2: function () {
-      bus.$emit('addThisAnime2', this.id)
+      bus.$emit('addThisAnime2', this.index)
     }
 
   }

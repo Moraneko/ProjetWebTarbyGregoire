@@ -62,8 +62,9 @@ export default {
   },
   created () {
     bus.$on('delThisAnime2', (idToDel) => {
-      console.log('hellow2')
-      this.fermerOverlay()
+      if (idToDel === this.id) {
+        this.fermerOverlay()
+      }
     })
   }
 }

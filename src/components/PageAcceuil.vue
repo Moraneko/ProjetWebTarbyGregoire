@@ -70,7 +70,7 @@
 import CarteInfo from './CarteInfo'
 import ConnectOverlay from './ConnectOverlay'
 import { bus } from '../main'
-// import Vue from 'vue'
+import Vue from 'vue'
 
 export default {
   props: {
@@ -78,13 +78,10 @@ export default {
   },
   data: () => ({
     overlayVisibility: false,
-    userName: 'Moran',
+    userName: '',
     idUser: -1,
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
-    indexOfData: 0,
-    titre: '',
-    img: '',
     dataFromApi: '',
     searchSTR: '',
     connected: false,
@@ -116,11 +113,17 @@ export default {
       this.overlayVisibility = true
     },
     updateScore: function (infoToUpdate) {
-      for (var i in this.listePerso) {
-        if (infoToUpdate[1] === this.listePerso[i].anime.mal_id) {
-          this.listePerso[i].score = infoToUpdate[0]
-        }
-      }
+      Vue.axios.post('http://localhost:4000/api/updateScore', {
+        id: this.idUser,
+        animeID: infoToUpdate[1],
+        newScore: infoToUpdate[0]
+      }).then(response => {
+        console.log(response.data)
+        this.listePerso[response.data.indexToUpdate].score = response.data.score
+        bus.$emit('updateOverlayInfo')
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     isInListPerso: function (idFromAnime) {
       for (var i in this.listePerso) {
@@ -141,17 +144,48 @@ export default {
         console.log(err)
       })
     },
+    updateComment: function (newComment) {
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/updateComment', {
+        id: self.idUser,
+        animeID: newComment[1],
+        newComment: newComment[0]
+      }).then(response => {
+        self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
+        bus.$emit('updateOverlayInfo')
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     delThisAnime: function (idOfAnime) {
-      for (var i in this.listePerso) {
-        if (this.listePerso[i].anime.mal_id === idOfAnime) {
-          console.log('hello')
-          this.listePerso.splice(i, 1)
-        }
-      }
+      Vue.axios.post('http://localhost:4000/api/delAnime', {
+        id: this.idUser,
+        animeID: idOfAnime
+      }).then(response => {
+        this.listePerso = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getMyNewList: function () {
+      Vue.axios.post('http://localhost:4000/api/maListe', {
+        id: this.idUser
+      }).then(response => {
+        this.listePerso = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     addThisAnime: function (indexOfAnime) {
-      var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":-0,"commentaire":""}')
-      this.listePerso.push(obj)
+      var obj = JSON.parse('{"anime": ' + JSON.stringify(this.dataFromApi[indexOfAnime]) + ',"score":0,"commentaire":""}')
+      Vue.axios.post('http://localhost:4000/api/addAnime', {
+        id: this.idUser,
+        newData: obj
+      }).then(response => {
+        this.listePerso = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     search: function () {
       this.allBool = true
@@ -177,6 +211,9 @@ export default {
     this.idUser = sessionStorage.getItem('idUser')
 
     this.$vuetify.theme.dark = true
+    bus.$on('fermerOverlayConnexion', () => {
+      this.overlayVisibility = false
+    })
     bus.$on('updateScoreFromOverLay', (infoFromOverlay) => {
       this.updateScore(infoFromOverlay)
     })
@@ -186,8 +223,8 @@ export default {
     bus.$on('addThisAnime2', (indexToAdd) => {
       this.addThisAnime(indexToAdd)
     })
-    bus.$on('fermerOverlayConnexion', () => {
-      this.overlayVisibility = false
+    bus.$on('updateComment', (val) => {
+      this.updateComment([val[0], val[1]])
     })
     fetch('https://api.jikan.moe/v3/top/anime/1').then(response => {
       return response.json()
@@ -196,6 +233,7 @@ export default {
     }).catch(err => {
       console.log(err)
     })
+    this.getMyNewList()
   }
 }
 </script>

@@ -13,7 +13,45 @@ const session = require('express-session')
 var cookieParser = require('cookie-parser')
 
 const app = express()
-var user = []
+var user = [{ user: 'MORAN',
+  email: 'moranmail.fr',
+  password: 'Motdepasse',
+  idUser: 1,
+  listePerso: [{
+    score: 5,
+    commentaire: 'Nice',
+    anime: {
+      mal_id: 5114,
+      rank: 1,
+      title: 'Fullmetal Alchemist: Brotherhood',
+      url: 'https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood',
+      image_url: 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg?s=faffcb677a5eacd17bf761edd78bfb3f',
+      type: 'TV',
+      episodes: 64,
+      start_date: 'Apr 2009',
+      end_date: 'Jul 2010',
+      members: 1562628,
+      score: 9.23
+    }
+  },
+  {
+    score: 3,
+    commentaire: 'Ok',
+    anime: {
+      mal_id: 9253,
+      rank: 2,
+      title: 'Steins;Gate',
+      url: 'https://myanimelist.net/anime/9253/Steins_Gate',
+      image_url: 'https://cdn.myanimelist.net/images/anime/5/73199.jpg?s=97b97d568f25a02cf5a22dda13b5371f',
+      type: 'TV',
+      episodes: 24,
+      start_date: 'Apr 2011',
+      end_date: 'Sep 2011',
+      members: 1291950,
+      score: 9.12
+    }
+  }]
+}]
 var id = 0
 
 // ces lignes (cors) sont importantes pour les sessions dans la version de développement
@@ -50,32 +88,6 @@ app.get('/api/test', (req, res) => {
     }
   ])
 })
-/*
-app.post('/api/login', (req, res) => {
-  console.log('req.body', req.body)
-  console.log('req.query', req.query)
-  if (!req.session.userId) {
-    const user = users.find(u => u.username === req.body.login && u.password === req.body.password)
-    if (!user) {
-      // gérez le cas où on n'a pas trouvé d'utilisateur correspondant
-      res.status(401)
-      res.json({
-        message: 'error'
-      })
-    } else {
-      // connect the user
-      req.session.userId = 1000 // connect the user, and change the id
-      res.json({
-        message: 'connected'
-      })
-    }
-  } else {
-    res.status(401)
-    res.json({
-      message: 'you are already connected'
-    })
-  }
-}) */
 
 app.post('/api/sigin', (req, res) => {
   console.log('ok')
@@ -97,6 +109,83 @@ app.post('/api/sigin', (req, res) => {
     res.json({ message: 'L\'adresse email renseignée est deja utilisée', connect: 'false' })
   }
 })
+app.post('/api/maListe', (req, res) => {
+  for (var i in user) {
+    if (req.body.id === user[i].idUser) {
+      res.json(user[i].listePerso)
+    }
+  }
+})
+app.post('/api/addAnime', (req, res) => {
+  for (var i in user) {
+    if (req.body.id === user[i].idUser) {
+      user[i].listePerso.push(req.body.newData)
+      res.json(user[i].listePerso)
+    }
+  }
+})
+app.post('/api/delAnime', (req, res) => {
+  var done = false
+  for (var i in user) {
+    if (req.body.id === user[i].idUser) {
+      for (var j in user[i].listePerso) {
+        if (req.body.animeID === user[i].listePerso[j].anime.mal_id) {
+          user[i].listePerso.splice(j, 1)
+          res.json(user[i].listePerso)
+          done = true
+        }
+      }
+      if (!done) {
+        res.json(user[i].listePerso)
+      }
+    }
+  }
+})
+app.post('/api/updateScore', (req, res) => {
+  for (var i in user) {
+    if (req.body.id === user[i].idUser) {
+      for (var j in user[i].listePerso) {
+        if (req.body.animeID === user[i].listePerso[j].anime.mal_id) {
+          user[i].listePerso[j].score = req.body.newScore
+          res.json({
+            indexToUpdate: j,
+            score: req.body.newScore
+          })
+        }
+      }
+    }
+  }
+})
+app.post('/api/updateComment', (req, res) => {
+  for (var i in user) {
+    if (req.body.id === user[i].idUser) {
+      for (var j in user[i].listePerso) {
+        if (req.body.animeID === user[i].listePerso[j].anime.mal_id) {
+          user[i].listePerso[j].commentaire = req.body.newComment
+          res.json({
+            indexToUpdate: j,
+            comment: req.body.newComment
+          })
+        }
+      }
+    }
+  }
+})
+app.post('/api/getComment', (req, res) => {
+  var commentList = []
+  for (var i in user) {
+    for (var j in user[i].listePerso) {
+      if (req.body.animeID === user[i].listePerso[j].anime.mal_id) {
+        commentList.push({
+          user: user[i].user,
+          score: user[i].listePerso[j].score,
+          commentaire: user[i].listePerso[j].commentaire
+        })
+      }
+    }
+  }
+  res.json(commentList)
+  })
 
 app.post('/api/login', (req, res) => {
   console.log('ok')

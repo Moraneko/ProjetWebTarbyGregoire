@@ -43,6 +43,7 @@
 <script>
 import Vue from 'vue'
 import { bus } from '../main'
+
 export default {
   data: () => ({
     valid: true,
@@ -69,6 +70,7 @@ export default {
     },
     reset () {
       this.$refs.form.reset()
+      bus.$emit('fermerOverlayConnexion')
     },
 
     async login () {

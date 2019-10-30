@@ -58,56 +58,42 @@
 
 <script>
 import { bus } from '../main'
+import Vue from 'vue'
 
 export default {
   props: {
     data: Object,
+    overlayVisibility: Boolean,
     id: Number,
     connected: Boolean,
     added: Array
   },
   data: () => ({
     avisLocal: [],
-    commentaire: '',
-    avisGlobal: [
-      {
-        id: 5114,
-        avis: [
-          {
-            user: 'Jean',
-            score: 10,
-            commentaire: 'Incroyable'
-          },
-          {
-            user: 'Pierre',
-            score: 6,
-            commentaire: 'Pas mauvais'
-          }
-        ]
-      },
-      {
-        id: 9253,
-        avis: [
-          {
-            user: 'Jean',
-            score: 9,
-            commentaire: 'Impressionant'
-          }
-        ]
-      }
-    ]
+    commentaire: ''
   }),
   methods: {
+    getComment: function () {
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/getComment', {
+        animeID: this.id
+      }).then(function (response) {
+        self.avisLocal = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     updateComment: function () {
       bus.$emit('updateComment', [this.commentaire, this.id])
     }
   },
   created () {
-    for (var i in this.avisGlobal) {
-      if (this.avisGlobal[i].id === this.id) {
-        this.avisLocal = this.avisGlobal[i].avis
+    this.getComment()
+    bus.$on('updateOverlayInfo', () => {
+      if (this.overlayVisibility) {
+        this.getComment()
       }
-    }
+    })
   }
 
 }

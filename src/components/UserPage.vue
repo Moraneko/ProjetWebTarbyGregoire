@@ -21,7 +21,7 @@
         </v-toolbar-items>
         <v-toolbar-items v-else >
            <v-btn color="#f00000" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
-           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deonnexion</v-btn>
+           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deconnexion</v-btn>
         </v-toolbar-items>
     </v-app-bar>
     <v-content class="primary">
@@ -48,6 +48,7 @@
 <script>
 import userAnimeInfo from './userAnimeInfo'
 import { bus } from '../main'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -62,7 +63,8 @@ export default {
     nbOAV: 0,
     nbEp: 0,
     mean: 0,
-    userName: 'Moran',
+    userName: '',
+    idUser: 1,
     drawer: null,
     connected: true,
     appelBool: false,
@@ -99,20 +101,44 @@ export default {
       this.nbFilm = film
     },
     updateScore: function (infoToUpdate) {
-      for (var i in this.listePerso) {
-        if (infoToUpdate[1] === this.listePerso[i].anime.mal_id) {
-          this.listePerso[i].score = infoToUpdate[0]
-        }
-      }
-      this.meanScore()
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/updateScore', {
+        id: self.idUser,
+        animeID: infoToUpdate[1],
+        newScore: infoToUpdate[0]
+      }).then(response => {
+        console.log(response.data)
+        self.listePerso[response.data.indexToUpdate].score = response.data.score
+        bus.$emit('updateOverlayInfo')
+        self.meanScore()
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
-    delThisAnime: function (idOfAnime) {
-      for (var i in this.listePerso) {
-        if (this.listePerso[i].anime.mal_id === idOfAnime) {
-          console.log('hello')
-          this.listePerso.splice(i, 1)
-        }
-      }
+    delThisAnime2: function (idOfAnime) {
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/delAnime', {
+        id: this.idUser,
+        animeID: idOfAnime
+      }).then(function (response) {
+        self.listePerso = response.data
+        self.stat()
+        self.meanScore()
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getMyNewList: function () {
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/maListe', {
+        id: this.idUser
+      }).then(response => {
+        self.listePerso = response.data
+        self.meanScore()
+        self.stat()
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     isInListPerso: function (idFromAnime) {
       for (var i in this.listePerso) {
@@ -123,12 +149,17 @@ export default {
       return [false, 0]
     },
     updateComment: function (newComment) {
-      for (var i in this.listePerso) {
-        if (newComment[1] === this.listePerso[i].anime.mal_id) {
-          this.listePerso[i].commentaire = newComment[0]
-          console.log(this.listePerso)
-        }
-      }
+      var self = this
+      Vue.axios.post('http://localhost:4000/api/updateComment', {
+        id: self.idUser,
+        animeID: newComment[1],
+        newComment: newComment[0]
+      }).then(response => {
+        self.listePerso[response.data.indexToUpdate].commentaire = response.data.comment
+        bus.$emit('updateOverlayInfo')
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     retour () {
     }
@@ -144,10 +175,10 @@ export default {
     this.userName = sessionStorage.getItem('user')
     this.idUser = sessionStorage.getItem('idUser')
     this.$vuetify.theme.dark = true
-    this.meanScore()
-    this.stat()
+    this.getMyNewList()
+
     bus.$on('delThisAnime2', (idToDel) => {
-      this.delThisAnime(idToDel)
+      this.delThisAnime2(idToDel)
     })
     bus.$on('updateScoreFromOverLay', (val) => {
       this.updateScore([val[0], val[1]])
