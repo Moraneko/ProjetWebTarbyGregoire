@@ -38,7 +38,7 @@
         </v-toolbar-items>
         <v-toolbar-items v-else >
            <v-btn color="#f00000" :to="{name: 'Utilisateur'}" class="pr-12"><v-icon class="px-1 mr-3">mdi-account</v-icon>{{userName}}</v-btn>
-           <v-btn color="#f00000"><v-icon class="px-1 ">mdi-close</v-icon>Deconnexion</v-btn>
+           <v-btn color="#f00000" @click="logout"><v-icon class="px-1 " >mdi-close</v-icon>Deconnexion</v-btn>
         </v-toolbar-items>
     </v-app-bar>
     <v-content class="primary">
@@ -78,13 +78,13 @@ export default {
   },
   data: () => ({
     overlayVisibility: false,
-    userName: '',
-    idUser: -1,
+    userName: sessionStorage.getItem('user'),
+    idUser: sessionStorage.getItem('idUser'),
     drawer: null,
     linkApi: 'https://api.jikan.moe/v3/',
     dataFromApi: '',
     searchSTR: '',
-    connected: false,
+    connected: JSON.parse(sessionStorage.getItem('connecte')),
     appelBool: false,
     listePerso: [],
     genre: [
@@ -197,7 +197,21 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    async logout () {
+      // déconnecter l'utilisateur
+      Vue.axios.post('http://localhost:4000/api/logout').then(function (response) {
+        if (response.data.connect === 'false') {
+          sessionStorage.setItem('idUser', response.data.session.idUser)
+          sessionStorage.setItem('user', response.data.session.user)
+          sessionStorage.setItem('connecte', response.data.session.connecte)
+          document.location.reload(true)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
+
   },
   created () {
     if (sessionStorage.getItem('idUser') === null) {
@@ -205,15 +219,9 @@ export default {
       sessionStorage.setItem('user', '')
       sessionStorage.setItem('connecte', false)
     }
-    this.connected = sessionStorage.getItem('connecte')
-    console.log(sessionStorage.getItem('connecte'))
-    this.userName = sessionStorage.getItem('user')
-    this.idUser = sessionStorage.getItem('idUser')
 
     this.$vuetify.theme.dark = true
-    bus.$on('fermerOverlayConnexion', () => {
-      this.overlayVisibility = false
-    })
+
     bus.$on('updateScoreFromOverLay', (infoFromOverlay) => {
       this.updateScore(infoFromOverlay)
     })
